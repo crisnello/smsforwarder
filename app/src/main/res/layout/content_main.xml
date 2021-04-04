@@ -13,7 +13,8 @@
         android:layout_marginHorizontal="40dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Ass: "/>
+        android:text="Ass: "
+        android:textSize="25dp"/>
 
     <TextView
         android:id="@+id/tvStatus"
@@ -21,7 +22,8 @@
         android:layout_marginHorizontal="40dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Service is not running"/>
+        android:text="Service is not running"
+        android:textSize="25dp"/>
 
     <TextView
         android:id="@+id/tvTarget"
@@ -29,5 +31,42 @@
         android:layout_marginHorizontal="40dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Phone: "/>
+        android:text="Phone: "
+        android:textSize="25dp"/>
+
+
+
+    <RelativeLayout
+        android:layout_margin="90dp"
+        android:id="@+id/btn_silent_mode"
+        android:layout_toEndOf="@+id/tvTarget"
+        android:background="@drawable/button_add"
+        android:clickable="true"
+        android:focusable="true"
+        android:padding="30dp"
+        android:foreground="?attr/selectableItemBackground"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/ivNotification"
+            android:layout_width="74dp"
+            android:layout_height="45dp"
+            android:paddingStart="5dp"
+            android:paddingEnd="10dp"
+            android:src="@android:drawable/ic_popup_reminder" />
+
+        <TextView
+            android:id="@+id/txtBtn_notification"
+            android:layout_width="147dp"
+            android:layout_height="46dp"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="0dp"
+            android:layout_toEndOf="@+id/ivNotification"
+            android:gravity="end|center_horizontal"
+            android:text="Notification area"
+            android:textColor="@android:color/white"
+            android:textSize="15sp" />
+
+    </RelativeLayout>
 </LinearLayout>

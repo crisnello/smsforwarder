@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">SMS Forwarder by crisnello</string>
 
-    <string name="app_setting">SMS Forwarder</string>
+    <string name="app_generic_name">SMS Forwarder</string>
 
     <string name="local_service_started">SMS Forwarder by crisnello</string>
 
@@ -9,7 +9,6 @@
     <string name="title_activity_settings">Settings</string>
 
     <!-- Preference Titles -->
-    <string name="messages_header">Messages</string>
     <string name="sync_header">Sync</string>
 
     <!-- Messages Preferences -->
@@ -30,9 +29,9 @@
     <string name="next">Next</string>
     <string name="previous">Previous</string>
 
-    <string name="hello_first_fragment">Hello first fragment</string>
-    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
-
+    <!-- Strings used for comunication -->
     <string name="error_invalid_phone_number">Invalid phone number</string>
     <string name="toast_sending_sms">Sending sms…</string>
+
+    <string name="alert_reply_off">You need put Reply action On in Setting for start service</string>
 </resources>

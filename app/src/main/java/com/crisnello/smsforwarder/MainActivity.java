@@ -24,6 +24,7 @@ import androidx.core.content.ContextCompat;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity implements OnNewMessageListener {
@@ -36,6 +37,7 @@ public class MainActivity extends AppCompatActivity implements OnNewMessageListe
     private TextView tvStatus;
     private TextView tvAss;
     private TextView tvTarget;
+    private RelativeLayout btnHideWindow;
     private int countRequestPermission;
     private SmsListener smsListener;
 
@@ -68,6 +70,13 @@ public class MainActivity extends AppCompatActivity implements OnNewMessageListe
         tvAss = (TextView) findViewById(R.id.tvAss);
         tvTarget = (TextView) findViewById(R.id.tvTarget);
 
+        btnHideWindow = (RelativeLayout) findViewById(R.id.btn_silent_mode);
+        btnHideWindow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                runBackgroung();
+            }
+        });
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -108,7 +117,7 @@ public class MainActivity extends AppCompatActivity implements OnNewMessageListe
         String targetNumber = spStore.getString(Constants.targetNumberKey, "");
 
         if(TextUtils.isEmpty(targetNumber)){
-            (new Util(this)).showToast("Click in Plus for set Target Number");
+            (new Util(this)).showToast("Click in Configuration for set Target Number");
             return null;
         }
 
@@ -127,8 +136,9 @@ public class MainActivity extends AppCompatActivity implements OnNewMessageListe
         SharedPreferences spStore = getSharedPreferences(Constants.spStorage, MODE_PRIVATE);
         tvAss.setText(spStore.getString(Constants.signatureKey, ""));
         String strTarget = spStore.getString(Constants.targetNumberKey,"");
-        if(TextUtils.isEmpty(strTarget)){
-            (new Util(this)).showAlert("Go to setting and set the target phone");
+        if(TextUtils.isEmpty(strTarget) || !SmsHelper.isValidPhoneNumber(strTarget)){
+            btnHideWindow.setVisibility(View.GONE);
+            (new Util(this)).showAlert( getString(R.string.error_invalid_phone_number));
         }else{
             tvTarget.setText("Target : "+strTarget);
             startReply();
@@ -143,10 +153,18 @@ public class MainActivity extends AppCompatActivity implements OnNewMessageListe
         String reply = spStore.getString(Constants.replyKey, Constants.replyKey);
         Log.d(TAG,"--> startReply() : reply is " + reply);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-            if(reply.equals(Constants.replyKey)) validateSmsPermission();
-            else showMsg(reply);
+            if(reply.equals(Constants.replyKey)) {
+                btnHideWindow.setVisibility(View.VISIBLE);
+                validateSmsPermission();
+            }else{
+                btnHideWindow.setVisibility(View.GONE);
+                (new Util(this)).showAlert(getString(R.string.alert_reply_off));
+            }
         else {
-            if(reply.equals(Constants.replyKey)) registerReceive();
+            if(reply.equals(Constants.replyKey)){
+                btnHideWindow.setVisibility(View.VISIBLE);
+                registerReceive();
+            }
             else showMsg(reply);
         }
     }
@@ -166,29 +184,7 @@ public class MainActivity extends AppCompatActivity implements OnNewMessageListe
 
 
     private void registerReceive(){
-
         launchSmsService();
-
-//        if(smsListener == null) {
-//            Log.d(TAG, "--> registerReceive()");
-//            smsListener = new SmsListener();
-//            smsListener.setListener(this);
-//            IntentFilter intentFilter = new IntentFilter();
-//            intentFilter.addAction("android.provider.Telephony.SMS_RECEIVED");
-//            registerReceiver(smsListener, intentFilter);
-//            tvStatus.setText("Service is running...");
-//        }
-    }
-
-    private void unregisterReceive(){
-        Log.d(TAG,"--> unregisterReceive() : in Samsung s20 Plus not work, just forcestop");
-        try {
-            unregisterReceiver(smsListener);
-            smsListener = null;
-        } catch (Exception ignored) {
-            smsListener = null;
-            ignored.printStackTrace();
-        }
     }
 
 
