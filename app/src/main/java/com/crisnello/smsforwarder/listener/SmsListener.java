@@ -3,14 +3,11 @@ package com.crisnello.smsforwarder.listener;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.provider.Telephony;
 import android.telephony.SmsMessage;
 import android.util.Log;
 
-import com.crisnello.smsforwarder.Constants;
-import com.crisnello.smsforwarder.util.Util;
 
 public class SmsListener extends BroadcastReceiver {
 
@@ -42,7 +39,7 @@ public class SmsListener extends BroadcastReceiver {
                     if (onNewMessageListener != null){
                         onNewMessageListener.onNewMessageReceived(msg_from,msgBody);
                     }
-
+                    //TODO Debug mod
 //                    SharedPreferences spStore = context.getSharedPreferences(Constants.spStorage, context.MODE_PRIVATE);
 //                    String ass =spStore.getString(Constants.signatureKey, "");
 //                    (new Util(context)).showToast(ass + " ("+msg_from +") say: "+msgBody);

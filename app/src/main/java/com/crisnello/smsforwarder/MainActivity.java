@@ -35,6 +35,7 @@ public class MainActivity extends AppCompatActivity implements OnNewMessageListe
     private int requestPermissionCode = 0;
     private TextView tvStatus;
     private TextView tvAss;
+    private TextView tvTarget;
     private int countRequestPermission;
     private SmsListener smsListener;
 
@@ -46,6 +47,7 @@ public class MainActivity extends AppCompatActivity implements OnNewMessageListe
             String ass =spStore.getString(Constants.signatureKey, "");
 
             SmsHelper.sendDebugSms(toNumber, ass + " ("+from +") say: "+msg);
+            //TODO Debug Mod
             //(new Util(this)).showToast(getString(R.string.toast_sending_sms));
         }
     }
@@ -64,6 +66,7 @@ public class MainActivity extends AppCompatActivity implements OnNewMessageListe
 
         tvStatus = (TextView) findViewById(R.id.tvStatus);
         tvAss = (TextView) findViewById(R.id.tvAss);
+        tvTarget = (TextView) findViewById(R.id.tvTarget);
 
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -78,14 +81,26 @@ public class MainActivity extends AppCompatActivity implements OnNewMessageListe
 
     public void launchSmsService() {
         if(!isService) {
+
+            tvStatus.setText("Service is running...");
+
             startService(new Intent(getApplicationContext(), BackgroundService.class));
+
+            isService = true;
+        }
+    }
+
+    private void runBackgroung(){
+        if(isService){
             Intent startMain = new Intent(Intent.ACTION_MAIN);
             startMain.addCategory(Intent.CATEGORY_HOME);
             startMain.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(startMain);
-            isService = true;
+        }else{
+            startActivity(new Intent(getApplicationContext(), SettingsActivity.class));
         }
     }
+
 
     private String hasValidPreConditions() {
 
@@ -111,7 +126,16 @@ public class MainActivity extends AppCompatActivity implements OnNewMessageListe
         Log.d(TAG,"--> onResume()");
         SharedPreferences spStore = getSharedPreferences(Constants.spStorage, MODE_PRIVATE);
         tvAss.setText(spStore.getString(Constants.signatureKey, ""));
-        startReply();
+        String strTarget = spStore.getString(Constants.targetNumberKey,"");
+        if(TextUtils.isEmpty(strTarget)){
+            (new Util(this)).showAlert("Go to setting and set the target phone");
+        }else{
+            tvTarget.setText("Target : "+strTarget);
+            startReply();
+        }
+
+
+
     }
 
     private void startReply(){

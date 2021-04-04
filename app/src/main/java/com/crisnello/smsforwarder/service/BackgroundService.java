@@ -1,7 +1,6 @@
 package com.crisnello.smsforwarder.service;
 
 
-import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -19,7 +18,6 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Binder;
 import android.os.Build;
-import android.os.Bundle;
 import android.os.IBinder;
 import android.text.TextUtils;
 import android.util.Log;
@@ -41,19 +39,19 @@ public class BackgroundService extends Service implements OnNewMessageListener {
 
     private SmsListener smsListener;
 
-    Notification myNotication;
+//    Notification myNotication;
+//    private NotificationManager mNM;
+//    Bundle b;
+//    Intent notificationIntent;
 
-    private NotificationManager mNM;
-    Bundle b;
-    Intent notificationIntent;
     private final IBinder mBinder = new LocalBinder();
-    private String newtext;
-
     public class LocalBinder extends Binder {
         BackgroundService getService() {
             return BackgroundService.this;
         }
     }
+
+    private String newtext;
 
     @Override
     public void onCreate() {
