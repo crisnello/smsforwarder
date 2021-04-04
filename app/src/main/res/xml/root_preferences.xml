@@ -7,6 +7,11 @@
             app:title="@string/signature_title"
             app:useSimpleSummaryProvider="true" />
 
+        <EditTextPreference
+            app:key="targetNumber"
+            app:title="@string/target_number"
+            app:useSimpleSummaryProvider="true" />
+
         <ListPreference
             app:defaultValue="reply"
             app:entries="@array/reply_entries"

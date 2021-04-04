@@ -7,7 +7,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.telephony.SmsMessage;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.crisnello.smsforwarder.Constants;
 import com.crisnello.smsforwarder.util.Util;
@@ -19,7 +18,7 @@ public class SmsListener extends BroadcastReceiver {
     OnNewMessageListener onNewMessageListener;
     public SmsListener() {
     }
-    public SmsListener(OnNewMessageListener onNewMessageListener) {
+    public void setListener(OnNewMessageListener onNewMessageListener) {
         this.onNewMessageListener = onNewMessageListener;
     }
 
@@ -30,7 +29,6 @@ public class SmsListener extends BroadcastReceiver {
             SmsMessage[] msgs = null;
             String msg_from = "";
             if (bundle != null){
-
                 try{
                     Object[] pdus = (Object[]) bundle.get("pdus");
                     msgs = new SmsMessage[pdus.length];
@@ -43,9 +41,10 @@ public class SmsListener extends BroadcastReceiver {
                     if (onNewMessageListener != null){
                         onNewMessageListener.onNewMessageReceived(msg_from,msgBody);
                     }
+
+                    //TODO remove
                     SharedPreferences spStore = context.getSharedPreferences(Constants.spStorage, context.MODE_PRIVATE);
                     String ass =spStore.getString(Constants.signatureKey, "");
-                    //TODO remove
                     (new Util(context)).showToast(ass + " ("+msg_from +") say: "+msgBody);
 
                 }catch(Exception e){

@@ -77,21 +77,12 @@ public class SettingsActivity extends AppCompatActivity {
         //finish();
     }
 
-//    @Override
-//    protected void onDestroy() {
-//        Log.e(TAG, "--> onDestroy()");
-//        SharedPreferences spStore = getSharedPreferences(Constants.spStorage, MODE_PRIVATE);
-//        String reply =spStore.getString(Constants.replyKey, Constants.replyKey);
-//        if(reply.equals(Constants.replyKey)){
-//            //new ControlService(this).register();
-//        }
-//        super.onDestroy();
-//    }
+
 
     public static class SettingsFragment extends PreferenceFragmentCompat {
 
 
-        private EditTextPreference signature;
+        private EditTextPreference signature, targetNumber;
         private ListPreference reply;
         private SetConf setConf;
 
@@ -128,6 +119,18 @@ public class SettingsActivity extends AppCompatActivity {
                     return true;
                 }
             });
+
+            targetNumber = (EditTextPreference) findPreference(Constants.targetNumberKey);
+            targetNumber.setText(spStore.getString(Constants.targetNumberKey, ""));
+            targetNumber.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                @Override
+                public boolean onPreferenceChange(Preference preference, Object newValue) {
+                    String strTargetNumber = (String) newValue;
+                    spStore.edit().putString(Constants.targetNumberKey,strTargetNumber).apply();
+                    return true;
+                }
+            });
+
         }
     }
 }

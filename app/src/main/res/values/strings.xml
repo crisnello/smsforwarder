@@ -13,6 +13,7 @@
 
     <!-- Messages Preferences -->
     <string name="signature_title">Your signature</string>
+    <string name="target_number">Target number</string>
     <string name="reply_title">Reply action</string>
 
     <!-- Sync Preferences -->
@@ -30,4 +31,7 @@
 
     <string name="hello_first_fragment">Hello first fragment</string>
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+
+    <string name="error_invalid_phone_number">Invalid phone number</string>
+    <string name="toast_sending_sms">Sending sms…</string>
 </resources>
