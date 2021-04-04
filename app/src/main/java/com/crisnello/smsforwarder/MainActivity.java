@@ -138,8 +138,14 @@ public class MainActivity extends AppCompatActivity {
 
     private void validateSmsPermission() {
         Log.e(TAG,"--> validateSmsPermission() - countRequestPermission : "+countRequestPermission);
-        if(countRequestPermission > 1){ //one Chance for two open's
-            finish(); //put dialog information about just one more try and finish in close dialog
+        if(countRequestPermission > 1 && !isSmsPermission()){ //one Chance for two open's
+            //finish(); //put dialog information about just one more try and finish in close dialog
+            (new Util(this)).showAlertFinish("Just two times is allowed",new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    finish();
+                }
+            });
         }else{
             countRequestPermission++;
             if (!isSmsPermission()) { requetPermission();

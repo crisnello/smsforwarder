@@ -15,7 +15,7 @@ import com.crisnello.smsforwarder.R;
 
 public class CustomAlert extends Dialog
 {
-    public CustomAlert(Context context) {
+    public CustomAlert(Context context,View.OnClickListener listener) {
         super(context);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.custom_alert);
@@ -23,12 +23,17 @@ public class CustomAlert extends Dialog
         if ( Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
             getWindow().setStatusBarColor(getContext().getResources().getColor(R.color.design_default_color_background));
 
-        setButtonListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dismiss();
-            }
-        }, ButtonOptions.CLOSE);
+        if(listener != null){
+            setButtonListener(listener,ButtonOptions.CLOSE);
+        }else{
+            setButtonListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    dismiss();
+                }
+            }, ButtonOptions.CLOSE);
+        }
+
     }
 
     public void setMessage(String message)

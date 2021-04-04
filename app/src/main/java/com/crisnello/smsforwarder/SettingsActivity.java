@@ -72,9 +72,9 @@ public class SettingsActivity extends AppCompatActivity {
     public void onBackPressed() {
         super.onBackPressed();
         if(getSignature() != null && !TextUtils.isEmpty(getSignature())) {
-            //(new Util).showToast("New ass "+getSignature());
+            (new Util(this)).showToast("New "+getSignature());
         }
-        finish();
+        //finish();
     }
 
     @Override

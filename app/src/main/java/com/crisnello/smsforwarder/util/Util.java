@@ -2,6 +2,7 @@ package com.crisnello.smsforwarder.util;
 
 
 import android.content.Context;
+import android.view.View;
 import android.widget.Toast;
 
 public class Util {
@@ -19,7 +20,13 @@ public class Util {
 
 
     public void showAlert(String pMsg){
-        CustomAlert alert = new CustomAlert(context);
+        CustomAlert alert = new CustomAlert(context,null);
+        alert.setMessage(pMsg);
+        alert.show();
+    }
+
+    public void showAlertFinish(String pMsg,View.OnClickListener listener){
+        CustomAlert alert = new CustomAlert(context,listener);
         alert.setMessage(pMsg);
         alert.show();
     }
