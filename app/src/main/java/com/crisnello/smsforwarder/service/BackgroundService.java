@@ -6,10 +6,12 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -27,6 +29,7 @@ import androidx.core.app.NotificationCompat;
 import com.crisnello.smsforwarder.Constants;
 import com.crisnello.smsforwarder.MainActivity;
 import com.crisnello.smsforwarder.R;
+import com.crisnello.smsforwarder.SettingsActivity;
 import com.crisnello.smsforwarder.helper.SmsHelper;
 import com.crisnello.smsforwarder.listener.OnNewMessageListener;
 import com.crisnello.smsforwarder.listener.SmsListener;
@@ -91,7 +94,7 @@ public class BackgroundService extends Service implements OnNewMessageListener {
     private void sendNotification(String message123) {
 
         Intent intent;
-            intent = new Intent(this, MainActivity.class);
+            intent = new Intent(this, SettingsActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
 
@@ -184,8 +187,17 @@ public class BackgroundService extends Service implements OnNewMessageListener {
     public void onDestroy() {
         Log.d(TAG,"--> onDestroy()");
         super.onDestroy();
-        unregisterReceive();
+        forceStop();
         stopSelf();
+    }
+
+    private void forceStop(){
+        Log.d(TAG,"--> forceStop()");
+        unregisterReceive();
+        ComponentName comp = new ComponentName(this,Constants.myBroadcastReceiver);
+        PackageManager pkg = this.getPackageManager();
+        pkg.setComponentEnabledSetting(comp,PackageManager.COMPONENT_ENABLED_STATE_DISABLED,PackageManager.DONT_KILL_APP);
+        MainActivity.isService = false;
     }
 
 

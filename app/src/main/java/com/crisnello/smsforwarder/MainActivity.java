@@ -69,7 +69,7 @@ public class MainActivity extends AppCompatActivity implements OnNewMessageListe
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                forceStop();
+                //forceStop();
                 startActivity(new Intent(getApplicationContext(), SettingsActivity.class));
             }
         });
@@ -77,12 +77,14 @@ public class MainActivity extends AppCompatActivity implements OnNewMessageListe
     }
 
     public void launchSmsService() {
-        startService(new Intent(MainActivity.this,BackgroundService.class));
-        Intent startMain = new Intent(Intent.ACTION_MAIN);
-        startMain.addCategory(Intent.CATEGORY_HOME);
-        startMain.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(startMain);
-        isService = true;
+        if(!isService) {
+            startService(new Intent(getApplicationContext(), BackgroundService.class));
+            Intent startMain = new Intent(Intent.ACTION_MAIN);
+            startMain.addCategory(Intent.CATEGORY_HOME);
+            startMain.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(startMain);
+            isService = true;
+        }
     }
 
     private String hasValidPreConditions() {
@@ -214,13 +216,13 @@ public class MainActivity extends AppCompatActivity implements OnNewMessageListe
     }
 
 
-    private void forceStop(){
-        Log.d(TAG,"--> forceStop()");
-        unregisterReceive();
-        ComponentName comp = new ComponentName(this,Constants.myBroadcastReceiver);
-        PackageManager pkg = this.getPackageManager();
-        pkg.setComponentEnabledSetting(comp,PackageManager.COMPONENT_ENABLED_STATE_DISABLED,PackageManager.DONT_KILL_APP);
-        tvStatus.setText("Service is stop.");
-    }
+//    private void forceStop(){
+//        Log.d(TAG,"--> forceStop()");
+//        unregisterReceive();
+//        ComponentName comp = new ComponentName(this,Constants.myBroadcastReceiver);
+//        PackageManager pkg = this.getPackageManager();
+//        pkg.setComponentEnabledSetting(comp,PackageManager.COMPONENT_ENABLED_STATE_DISABLED,PackageManager.DONT_KILL_APP);
+//        tvStatus.setText("Service is stop.");
+//    }
     
 }

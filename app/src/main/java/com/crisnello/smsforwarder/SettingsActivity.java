@@ -16,6 +16,7 @@ import androidx.preference.ListPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 
+import com.crisnello.smsforwarder.service.BackgroundService;
 import com.crisnello.smsforwarder.util.Util;
 
 public class SettingsActivity extends AppCompatActivity {
@@ -79,6 +80,11 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        stopService(new Intent(getApplicationContext(), BackgroundService.class));
+    }
 
     public static class SettingsFragment extends PreferenceFragmentCompat {
 
