@@ -10,6 +10,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.crisnello.smsforwarder.Constants;
+import com.crisnello.smsforwarder.util.Util;
 
 public class SmsListener extends BroadcastReceiver {
 
@@ -45,7 +46,7 @@ public class SmsListener extends BroadcastReceiver {
                     SharedPreferences spStore = context.getSharedPreferences(Constants.spStorage, context.MODE_PRIVATE);
                     String ass =spStore.getString(Constants.signatureKey, "");
                     //TODO remove
-                    Toast.makeText(context,ass + " ("+msg_from +") say: "+msgBody,Toast.LENGTH_SHORT).show();
+                    (new Util(context)).showToast(ass + " ("+msg_from +") say: "+msgBody);
 
                 }catch(Exception e){
                     Log.d("Exception caught",e.getMessage());

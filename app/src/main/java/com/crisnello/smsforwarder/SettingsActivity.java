@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Toast;
 
@@ -14,7 +15,11 @@ import androidx.preference.ListPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 
+import com.crisnello.smsforwarder.util.Util;
+
 public class SettingsActivity extends AppCompatActivity {
+
+    private static final String TAG = "SettingsActivity";
 
     private String signature;
     public String getSignature() {
@@ -67,9 +72,25 @@ public class SettingsActivity extends AppCompatActivity {
     public void onBackPressed() {
         super.onBackPressed();
         if(getSignature() != null && !TextUtils.isEmpty(getSignature())) {
-            Toast.makeText(this, "New ass: " + getSignature(), Toast.LENGTH_SHORT).show();
+            //(new Util).showToast("New ass "+getSignature());
         }
         finish();
+    }
+
+    @Override
+    protected void onDestroy() {
+
+        Log.e(TAG, "--> onDestroy()");
+
+        SharedPreferences spStore = getSharedPreferences(Constants.spStorage, MODE_PRIVATE);
+        String reply =spStore.getString(Constants.replyKey, Constants.replyKey);
+        if(reply.equals(Constants.replyKey)){
+
+
+            //(new Util(this)).showToast("Service is stop, if close this window, service not working");
+        }
+
+        super.onDestroy();
     }
 
     public static class SettingsFragment extends PreferenceFragmentCompat {

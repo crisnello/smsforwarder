@@ -11,6 +11,7 @@ import android.os.Bundle;
 
 import com.crisnello.smsforwarder.listener.OnNewMessageListener;
 import com.crisnello.smsforwarder.listener.SmsListener;
+import com.crisnello.smsforwarder.util.Util;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import androidx.annotation.NonNull;
@@ -21,10 +22,14 @@ import androidx.core.content.ContextCompat;
 
 import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 
 public class MainActivity extends AppCompatActivity {
+
+    private TextView tvStatus;
+    private TextView tvAss;
 
     private int countRequestPermission;
 
@@ -54,10 +59,14 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        tvStatus = (TextView) findViewById(R.id.tvStatus);
+        tvAss = (TextView) findViewById(R.id.tvAss);
+
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                forceStop();
                 startActivity(new Intent(getApplicationContext(), SettingsActivity.class));
             }
         });
@@ -67,6 +76,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         Log.e(TAG,"--> onResume()");
+        SharedPreferences spStore = getSharedPreferences(Constants.spStorage, MODE_PRIVATE);
+        tvAss.setText(spStore.getString(Constants.signatureKey, ""));
         startReply();
     }
 
@@ -84,7 +95,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void showMsg(String msg){
-        Toast.makeText(this,msg,Toast.LENGTH_SHORT).show();
+        (new Util(this)).showToast(msg);
     }
 
 
@@ -93,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
     public void onDestroy() {
         Log.e(TAG, "--> onDestroy()");
         super.onDestroy();
-        forceStop();
+
     }
 
 
@@ -104,6 +115,7 @@ public class MainActivity extends AppCompatActivity {
             IntentFilter intentFilter = new IntentFilter();
             intentFilter.addAction("android.provider.Telephony.SMS_RECEIVED");
             registerReceiver(smsListener, intentFilter);
+            tvStatus.setText("Service is running...");
         }
     }
 
@@ -126,7 +138,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void validateSmsPermission() {
         Log.e(TAG,"--> validateSmsPermission() - countRequestPermission : "+countRequestPermission);
-        if(countRequestPermission > 0){ //one Chance for two open's
+        if(countRequestPermission > 1){ //one Chance for two open's
             finish(); //put dialog information about just one more try and finish in close dialog
         }else{
             countRequestPermission++;
@@ -171,11 +183,10 @@ public class MainActivity extends AppCompatActivity {
     private void forceStop(){
         Log.e(TAG,"--> forceStop()");
         unregisterReceive();
-
         ComponentName comp = new ComponentName(this,"com.crisnello.smsforwarder.listener.SmsListener");
         PackageManager pkg = this.getPackageManager();
         pkg.setComponentEnabledSetting(comp,PackageManager.COMPONENT_ENABLED_STATE_DISABLED,PackageManager.DONT_KILL_APP);
-
+        tvStatus.setText("Service is stop.");
     }
     
 }
