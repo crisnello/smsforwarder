@@ -42,10 +42,9 @@ public class SmsListener extends BroadcastReceiver {
                         onNewMessageListener.onNewMessageReceived(msg_from,msgBody);
                     }
 
-                    //TODO remove
-                    SharedPreferences spStore = context.getSharedPreferences(Constants.spStorage, context.MODE_PRIVATE);
-                    String ass =spStore.getString(Constants.signatureKey, "");
-                    (new Util(context)).showToast(ass + " ("+msg_from +") say: "+msgBody);
+//                    SharedPreferences spStore = context.getSharedPreferences(Constants.spStorage, context.MODE_PRIVATE);
+//                    String ass =spStore.getString(Constants.signatureKey, "");
+//                    (new Util(context)).showToast(ass + " ("+msg_from +") say: "+msgBody);
 
                 }catch(Exception e){
                     Log.d("Exception caught",e.getMessage());
