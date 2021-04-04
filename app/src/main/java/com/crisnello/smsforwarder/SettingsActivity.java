@@ -77,21 +77,16 @@ public class SettingsActivity extends AppCompatActivity {
         //finish();
     }
 
-    @Override
-    protected void onDestroy() {
-
-        Log.e(TAG, "--> onDestroy()");
-
-        SharedPreferences spStore = getSharedPreferences(Constants.spStorage, MODE_PRIVATE);
-        String reply =spStore.getString(Constants.replyKey, Constants.replyKey);
-        if(reply.equals(Constants.replyKey)){
-
-
-            //(new Util(this)).showToast("Service is stop, if close this window, service not working");
-        }
-
-        super.onDestroy();
-    }
+//    @Override
+//    protected void onDestroy() {
+//        Log.e(TAG, "--> onDestroy()");
+//        SharedPreferences spStore = getSharedPreferences(Constants.spStorage, MODE_PRIVATE);
+//        String reply =spStore.getString(Constants.replyKey, Constants.replyKey);
+//        if(reply.equals(Constants.replyKey)){
+//            //new ControlService(this).register();
+//        }
+//        super.onDestroy();
+//    }
 
     public static class SettingsFragment extends PreferenceFragmentCompat {
 
