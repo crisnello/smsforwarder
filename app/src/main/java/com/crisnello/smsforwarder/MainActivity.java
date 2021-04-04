@@ -28,19 +28,14 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-
 public class MainActivity extends AppCompatActivity implements OnNewMessageListener {
-
-    private TextView tvStatus;
-    private TextView tvAss;
-
-    private int countRequestPermission;
 
     private static final String TAG = "MainActivity";
 
-
     private int requestPermissionCode = 0;
-    
+    private TextView tvStatus;
+    private TextView tvAss;
+    private int countRequestPermission;
     private SmsListener smsListener;
 
     @Override
@@ -51,7 +46,7 @@ public class MainActivity extends AppCompatActivity implements OnNewMessageListe
             String ass =spStore.getString(Constants.signatureKey, "");
 
             SmsHelper.sendDebugSms(toNumber, ass + " ("+from +") say: "+msg);
-            (new Util(this)).showToast(getString(R.string.toast_sending_sms));
+            //(new Util(this)).showToast(getString(R.string.toast_sending_sms));
         }
     }
 
@@ -60,7 +55,7 @@ public class MainActivity extends AppCompatActivity implements OnNewMessageListe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-        Log.e(TAG,"--> onCreate()");
+        Log.d(TAG,"--> onCreate()");
         countRequestPermission = 0;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -100,7 +95,7 @@ public class MainActivity extends AppCompatActivity implements OnNewMessageListe
     @Override
     protected void onResume() {
         super.onResume();
-        Log.e(TAG,"--> onResume()");
+        Log.d(TAG,"--> onResume()");
         SharedPreferences spStore = getSharedPreferences(Constants.spStorage, MODE_PRIVATE);
         tvAss.setText(spStore.getString(Constants.signatureKey, ""));
         startReply();
@@ -109,7 +104,7 @@ public class MainActivity extends AppCompatActivity implements OnNewMessageListe
     private void startReply(){
         SharedPreferences spStore = getSharedPreferences(Constants.spStorage, MODE_PRIVATE);
         String reply = spStore.getString(Constants.replyKey, Constants.replyKey);
-        Log.e(TAG,"--> startReply() : reply is " + reply);
+        Log.d(TAG,"--> startReply() : reply is " + reply);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
             if(reply.equals(Constants.replyKey)) validateSmsPermission();
             else showMsg(reply);
@@ -127,7 +122,7 @@ public class MainActivity extends AppCompatActivity implements OnNewMessageListe
 
     @Override
     public void onDestroy() {
-        Log.e(TAG, "--> onDestroy()");
+        Log.d(TAG, "--> onDestroy()");
         super.onDestroy();
 
     }
@@ -135,7 +130,7 @@ public class MainActivity extends AppCompatActivity implements OnNewMessageListe
 
     private void registerReceive(){
         if(smsListener == null) {
-            Log.e(TAG, "--> registerReceive()");
+            Log.d(TAG, "--> registerReceive()");
             smsListener = new SmsListener();
             smsListener.setListener(this);
             IntentFilter intentFilter = new IntentFilter();
@@ -146,7 +141,7 @@ public class MainActivity extends AppCompatActivity implements OnNewMessageListe
     }
 
     private void unregisterReceive(){
-        Log.e(TAG,"--> unregisterReceive() : in Samsung s20 Plus not work, just forcestop");
+        Log.d(TAG,"--> unregisterReceive() : in Samsung s20 Plus not work, just forcestop");
         try {
             unregisterReceiver(smsListener);
             smsListener = null;
@@ -158,7 +153,7 @@ public class MainActivity extends AppCompatActivity implements OnNewMessageListe
 
 
     private void validateSmsPermission() {
-        Log.e(TAG,"--> validateSmsPermission() - countRequestPermission : "+countRequestPermission);
+        Log.d(TAG,"--> validateSmsPermission() - countRequestPermission : "+countRequestPermission);
         if(countRequestPermission > 1 && !isSmsPermission()){ //one Chance for two open's
             //finish(); //put dialog information about just one more try and finish in close dialog
             (new Util(this)).showAlertFinish("Just two times is allowed",new View.OnClickListener() {
@@ -206,9 +201,9 @@ public class MainActivity extends AppCompatActivity implements OnNewMessageListe
 
 
     private void forceStop(){
-        Log.e(TAG,"--> forceStop()");
+        Log.d(TAG,"--> forceStop()");
         unregisterReceive();
-        ComponentName comp = new ComponentName(this,"com.crisnello.smsforwarder.listener.SmsListener");
+        ComponentName comp = new ComponentName(this,Constants.myBroadcastReceiver);
         PackageManager pkg = this.getPackageManager();
         pkg.setComponentEnabledSetting(comp,PackageManager.COMPONENT_ENABLED_STATE_DISABLED,PackageManager.DONT_KILL_APP);
         tvStatus.setText("Service is stop.");
