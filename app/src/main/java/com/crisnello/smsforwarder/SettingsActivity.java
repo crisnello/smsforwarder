@@ -64,6 +64,7 @@ public class SettingsActivity extends AppCompatActivity {
 
     public static class SettingsFragment extends PreferenceFragmentCompat {
 
+        private final String signatureKey = "signature";
         private EditTextPreference signature;
         private SetConf setConf;
 
@@ -74,14 +75,16 @@ public class SettingsActivity extends AppCompatActivity {
         @Override
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
             setPreferencesFromResource(R.xml.root_preferences, rootKey);
-            signature = (EditTextPreference) findPreference("signature");
-            SharedPreferences getSignatgureStore = getContext().getSharedPreferences("signatureStorage", Context.MODE_PRIVATE);
-            signature.setText(getSignatgureStore.getString("signature", ""));
+
+            SharedPreferences spSignatureStore = getContext().getSharedPreferences("signatureStorage", Context.MODE_PRIVATE);
+
+            signature = (EditTextPreference) findPreference(signatureKey);
+            signature.setText(spSignatureStore.getString(signatureKey, ""));
             signature.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                 @Override
                 public boolean onPreferenceChange(Preference preference, Object newValue) {
                     String strSignature = (String) newValue;
-//                    preference.setSummary(strSignature);
+                    spSignatureStore.edit().putString(signatureKey,strSignature).apply();
                     setConf.onNewSignature(strSignature);
                     return true;
                 }
