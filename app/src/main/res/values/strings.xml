@@ -1,7 +1,8 @@
 <resources>
-    <string name="app_name">SMS Forwarder</string>
+    <string name="app_name">SMS Forwarder  by crisnello</string>
 
-    <string name="app_by">SMS Forwarder by crisnello</string>
+    <string name="app_setting">SMS Forwarder Settings</string>
+
 
     <!-- Settings Activity Title -->
     <string name="title_activity_settings">Settings</string>

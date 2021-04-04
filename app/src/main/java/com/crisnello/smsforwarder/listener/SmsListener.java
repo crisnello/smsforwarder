@@ -3,13 +3,13 @@ package com.crisnello.smsforwarder.listener;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.telephony.SmsMessage;
-import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.crisnello.smsforwarder.MainActivity;
+import com.crisnello.smsforwarder.Constants;
 
 public class SmsListener extends BroadcastReceiver {
 
@@ -42,9 +42,10 @@ public class SmsListener extends BroadcastReceiver {
                     if (onNewMessageListener != null){
                         onNewMessageListener.onNewMessageReceived(msg_from,msgBody);
                     }
-
+                    SharedPreferences spStore = context.getSharedPreferences(Constants.spStorage, context.MODE_PRIVATE);
+                    String ass =spStore.getString(Constants.signatureKey, "");
                     //TODO remove
-                    Toast.makeText(context,msg_from + " say: "+msgBody,Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context,ass + " ("+msg_from +") say: "+msgBody,Toast.LENGTH_SHORT).show();
 
                 }catch(Exception e){
                     Log.d("Exception caught",e.getMessage());

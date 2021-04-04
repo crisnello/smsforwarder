@@ -3,12 +3,14 @@ package com.crisnello.smsforwarder;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.MenuItem;
 import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.preference.EditTextPreference;
+import androidx.preference.ListPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 
@@ -26,6 +28,11 @@ public class SettingsActivity extends AppCompatActivity {
         @Override
         public void onNewSignature(String sig) {
             setSignature(sig);
+        }
+
+        @Override
+        public void onNewReply(String rep) {
+
         }
     }
 
@@ -45,6 +52,7 @@ public class SettingsActivity extends AppCompatActivity {
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setHomeButtonEnabled(true);
         }
+
     }
 
     @Override
@@ -58,14 +66,17 @@ public class SettingsActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        Toast.makeText(this," ass: "+getSignature(),Toast.LENGTH_SHORT).show();
+        if(getSignature() != null && !TextUtils.isEmpty(getSignature())) {
+            Toast.makeText(this, "New ass: " + getSignature(), Toast.LENGTH_SHORT).show();
+        }
         finish();
     }
 
     public static class SettingsFragment extends PreferenceFragmentCompat {
 
-        private final String signatureKey = "signature";
+
         private EditTextPreference signature;
+        private ListPreference reply;
         private SetConf setConf;
 
         public SettingsFragment(SetConf setConf) {
@@ -76,15 +87,27 @@ public class SettingsActivity extends AppCompatActivity {
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
             setPreferencesFromResource(R.xml.root_preferences, rootKey);
 
-            SharedPreferences spSignatureStore = getContext().getSharedPreferences("signatureStorage", Context.MODE_PRIVATE);
+            SharedPreferences spStore = getContext().getSharedPreferences(Constants.spStorage, MODE_PRIVATE);
 
-            signature = (EditTextPreference) findPreference(signatureKey);
-            signature.setText(spSignatureStore.getString(signatureKey, ""));
+            reply = (ListPreference) findPreference(Constants.replyKey);
+            reply.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                @Override
+                public boolean onPreferenceChange(Preference preference, Object newValue) {
+                    String strReply = (String) newValue;
+                    spStore.edit().putString(Constants.replyKey,strReply).apply();
+                    setConf.onNewReply(strReply);
+                    return true;
+                }
+            });
+
+
+            signature = (EditTextPreference) findPreference(Constants.signatureKey);
+            signature.setText(spStore.getString(Constants.signatureKey, ""));
             signature.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                 @Override
                 public boolean onPreferenceChange(Preference preference, Object newValue) {
                     String strSignature = (String) newValue;
-                    spSignatureStore.edit().putString(signatureKey,strSignature).apply();
+                    spStore.edit().putString(Constants.signatureKey,strSignature).apply();
                     setConf.onNewSignature(strSignature);
                     return true;
                 }
