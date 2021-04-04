@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.provider.Telephony;
 import android.telephony.SmsMessage;
 import android.util.Log;
 
@@ -24,7 +25,7 @@ public class SmsListener extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        if(intent.getAction().equals("android.provider.Telephony.SMS_RECEIVED")){
+        if (intent.getAction().equals(Telephony.Sms.Intents.SMS_RECEIVED_ACTION)) {
             Bundle bundle = intent.getExtras();
             SmsMessage[] msgs = null;
             String msg_from = "";
