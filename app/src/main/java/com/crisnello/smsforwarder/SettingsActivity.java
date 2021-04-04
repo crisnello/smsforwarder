@@ -1,6 +1,7 @@
 package com.crisnello.smsforwarder;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -72,9 +73,9 @@ public class SettingsActivity extends AppCompatActivity {
     public void onBackPressed() {
         super.onBackPressed();
         if(getSignature() != null && !TextUtils.isEmpty(getSignature())) {
-            (new Util(this)).showToast("New "+getSignature());
+            (new Util(this)).showToast("Ass: "+getSignature());
         }
-        //finish();
+        startActivity(new Intent(SettingsActivity.this,MainActivity.class));
     }
 
 

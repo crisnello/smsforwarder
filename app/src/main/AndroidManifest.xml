@@ -18,15 +18,14 @@
             android:label="@string/app_name"
             android:theme="@style/Theme.SMSForwarder.NoActionBar">
 
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-
         </activity>
         <activity
             android:name=".SettingsActivity"
             android:label="@string/app_setting">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
 
         <receiver android:name=".listener.SmsListener">
@@ -34,6 +33,7 @@
                 <action android:name="android.provider.Telephony.SMS_RECEIVED" />
             </intent-filter>
         </receiver>
+        <service android:enabled="true" android:name=".service.BackgroundService" />
 
     </application>
 

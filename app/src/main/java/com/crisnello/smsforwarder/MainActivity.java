@@ -2,9 +2,7 @@ package com.crisnello.smsforwarder;
 
 import android.Manifest;
 import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
@@ -13,6 +11,7 @@ import android.os.Bundle;
 import com.crisnello.smsforwarder.helper.SmsHelper;
 import com.crisnello.smsforwarder.listener.OnNewMessageListener;
 import com.crisnello.smsforwarder.listener.SmsListener;
+import com.crisnello.smsforwarder.service.BackgroundService;
 import com.crisnello.smsforwarder.util.Util;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -26,11 +25,12 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity implements OnNewMessageListener {
 
     private static final String TAG = "MainActivity";
+
+    public static boolean isService = false;
 
     private int requestPermissionCode = 0;
     private TextView tvStatus;
@@ -73,7 +73,18 @@ public class MainActivity extends AppCompatActivity implements OnNewMessageListe
                 startActivity(new Intent(getApplicationContext(), SettingsActivity.class));
             }
         });
+
     }
+
+    public void launchSmsService() {
+        startService(new Intent(MainActivity.this,BackgroundService.class));
+        Intent startMain = new Intent(Intent.ACTION_MAIN);
+        startMain.addCategory(Intent.CATEGORY_HOME);
+        startMain.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(startMain);
+        isService = true;
+    }
+
     private String hasValidPreConditions() {
 
         SharedPreferences spStore = getSharedPreferences(Constants.spStorage, MODE_PRIVATE);
@@ -129,15 +140,18 @@ public class MainActivity extends AppCompatActivity implements OnNewMessageListe
 
 
     private void registerReceive(){
-        if(smsListener == null) {
-            Log.d(TAG, "--> registerReceive()");
-            smsListener = new SmsListener();
-            smsListener.setListener(this);
-            IntentFilter intentFilter = new IntentFilter();
-            intentFilter.addAction("android.provider.Telephony.SMS_RECEIVED");
-            registerReceiver(smsListener, intentFilter);
-            tvStatus.setText("Service is running...");
-        }
+
+        launchSmsService();
+
+//        if(smsListener == null) {
+//            Log.d(TAG, "--> registerReceive()");
+//            smsListener = new SmsListener();
+//            smsListener.setListener(this);
+//            IntentFilter intentFilter = new IntentFilter();
+//            intentFilter.addAction("android.provider.Telephony.SMS_RECEIVED");
+//            registerReceiver(smsListener, intentFilter);
+//            tvStatus.setText("Service is running...");
+//        }
     }
 
     private void unregisterReceive(){
