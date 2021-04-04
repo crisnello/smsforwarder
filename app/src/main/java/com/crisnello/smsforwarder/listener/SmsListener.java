@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.telephony.SmsMessage;
+import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -13,6 +14,13 @@ import com.crisnello.smsforwarder.MainActivity;
 public class SmsListener extends BroadcastReceiver {
 
     private String msgBody;
+
+    OnNewMessageListener onNewMessageListener;
+    public SmsListener() {
+    }
+    public SmsListener(OnNewMessageListener onNewMessageListener) {
+        this.onNewMessageListener = onNewMessageListener;
+    }
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -29,9 +37,13 @@ public class SmsListener extends BroadcastReceiver {
                         msgs[i] = SmsMessage.createFromPdu((byte[])pdus[i], bundle.getString("format"));
                         msg_from = msgs[i].getOriginatingAddress();
                         msgBody = msgs[i].getMessageBody();
-                        MainActivity.handleMessage(msgBody);
                     }
 
+                    if (onNewMessageListener != null){
+                        onNewMessageListener.onNewMessageReceived(msg_from,msgBody);
+                    }
+
+                    //TODO remove
                     Toast.makeText(context,msg_from + " say: "+msgBody,Toast.LENGTH_SHORT).show();
 
                 }catch(Exception e){

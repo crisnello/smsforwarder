@@ -26,9 +26,6 @@ public class MainActivity extends AppCompatActivity {
     
     private SmsListener smsListener;
 
-    public static void handleMessage(String msgBody) {
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

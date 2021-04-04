@@ -17,7 +17,8 @@
 
     </PreferenceCategory>
 
-    <PreferenceCategory app:title="@string/sync_header">
+    <PreferenceCategory app:title="@string/sync_header"
+        app:isPreferenceVisible="false">
 
         <SwitchPreferenceCompat
             app:key="sync"
