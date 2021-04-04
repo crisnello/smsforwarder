@@ -14,48 +14,6 @@ public class SmsListener extends BroadcastReceiver {
 
     private String msgBody;
 
-//    OnNewMessageListener onNewMessageListener;
-//    public SmsListener() {
-//    }
-//    public SmsListener(OnNewMessageListener onNewMessageListener) {
-//        this.onNewMessageListener = onNewMessageListener;
-//    }
-//    @Override
-//    public void onReceive(Context context, Intent intent) {
-//        if (SmsRetriever.SMS_RETRIEVED_ACTION.equals(intent.getAction())) {
-//            Bundle extras = intent.getExtras();
-//            if (extras != null) {
-//                Status status = (Status) extras.get(SmsRetriever.EXTRA_STATUS);
-//
-//                if (status != null)
-//                    switch (status.getStatusCode()) {
-//                        case CommonStatusCodes.SUCCESS:
-//                            // Get SMS message contents
-//                            String message = (String) extras.get(SmsRetriever.EXTRA_SMS_MESSAGE);
-//                            // Extract one-time code from the message and complete verification
-//                            // by sending the code back to your server.
-//                            if (!TextUtils.isEmpty(message)) {
-//                                String activationCode = null;
-//                                Pattern p = Pattern.compile("your pattern like \\b\\d{4}\\b");
-//                                Matcher m = p.matcher(message);
-//                                if (m.find()) {
-//                                    activationCode = (m.group(0));  // The matched substring
-//                                }
-//
-//                                if (onNewMessageListener != null && !TextUtils.isEmpty(activationCode))
-//                                    onNewMessageListener.onNewMessageReceived(activationCode);
-//                            }
-//                            break;
-//                        case CommonStatusCodes.TIMEOUT:
-//                            // Waiting for SMS timed out (5 minutes)
-//                            // Handle the error ...
-//                            break;
-//                    }
-//            }
-//        }
-//    }
-
-
     @Override
     public void onReceive(Context context, Intent intent) {
         if(intent.getAction().equals("android.provider.Telephony.SMS_RECEIVED")){
