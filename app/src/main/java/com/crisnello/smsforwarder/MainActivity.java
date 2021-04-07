@@ -191,7 +191,7 @@ public class MainActivity extends AppCompatActivity implements OnNewMessageListe
     private void validateSmsPermission() {
         Log.d(TAG,"--> validateSmsPermission() - countRequestPermission : "+countRequestPermission);
         if(countRequestPermission > 1 && !isSmsPermission()){ //one Chance for two open's
-            //finish(); //put dialog information about just one more try and finish in close dialog
+            Log.e(TAG,"--> information about just one more try and finish in close dialog");
             (new Util(this)).showAlertFinish("Just two times is allowed",new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
