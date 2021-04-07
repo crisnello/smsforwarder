@@ -3,7 +3,7 @@
 
     <string name="app_generic_name">SMS Forwarder</string>
 
-    <string name="local_service_started">SMS Forwarder by crisnello</string>
+    <string name="local_service_started">by crisnello</string>
 
     <!-- Settings Activity Title -->
     <string name="title_activity_settings">Settings</string>

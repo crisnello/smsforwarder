@@ -1,10 +1,19 @@
 package com.crisnello.smsforwarder;
 
 import android.Manifest;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 
@@ -19,6 +28,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
 
 import android.text.TextUtils;
@@ -232,17 +242,75 @@ public class MainActivity extends AppCompatActivity implements OnNewMessageListe
         }catch(Exception e){
             e.printStackTrace();
         }
-
     }
 
+    private void sendNotification(String message123) {
 
-//    private void forceStop(){
-//        Log.d(TAG,"--> forceStop()");
-//        unregisterReceive();
-//        ComponentName comp = new ComponentName(this,Constants.myBroadcastReceiver);
-//        PackageManager pkg = this.getPackageManager();
-//        pkg.setComponentEnabledSetting(comp,PackageManager.COMPONENT_ENABLED_STATE_DISABLED,PackageManager.DONT_KILL_APP);
-//        tvStatus.setText("Service is stop.");
-//    }
+        Intent intent;
+        intent = new Intent(this, SettingsActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+
+        if (android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+            long[] pattern = {500, 500, 500, 500, 500, 500, 500, 500, 500};
+            Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+            Bitmap largeIcon = BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher);
+
+            NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
+                    .setSmallIcon(R.drawable.ic_launcher)
+                    .setLargeIcon(largeIcon)
+                    .setContentTitle(getString(R.string.app_name))
+                    .setContentText(message123)
+                    .setAutoCancel(true)
+                    .setSound(alarmSound)
+                    .setVibrate(pattern)
+                    .setContentIntent(pendingIntent);
+            notificationManager.notify(0, notificationBuilder.build());
+        } else {
+//            Logger.e("**android.os.Build.VERSION.SDK_INT : " + android.os.Build.VERSION.SDK_INT);
+            try {
+                NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent, PendingIntent.FLAG_ONE_SHOT);
+                long[] pattern = {500, 500, 500, 500, 500, 500, 500, 500, 500};
+                Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+                Bitmap largeIcon = BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher);
+
+                String channelId = "android_channel_id";
+                String channelDescription = "Default Channel";
+                NotificationCompat.Builder notificationBuilder = null;
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    NotificationChannel channel = new NotificationChannel(channelId, channelDescription, NotificationManager.IMPORTANCE_DEFAULT);
+                    notificationManager.createNotificationChannel(channel);
+                    notificationBuilder = new NotificationCompat.Builder(this,channelId)
+                            .setSmallIcon(R.drawable.ic_launcher)
+                            .setLargeIcon(largeIcon)
+                            .setContentTitle(getString(R.string.local_service_started))
+                            .setContentText(message123)
+                            .setAutoCancel(true)
+                            .setColor(Color.parseColor("#d7ab0f"))
+                            .setSound(alarmSound)
+                            .setVibrate(pattern)
+                            .setContentIntent(pendingIntent);
+                }else{
+                    notificationBuilder = new NotificationCompat.Builder(this)
+                            .setSmallIcon(R.drawable.ic_launcher)
+                            .setLargeIcon(largeIcon)
+                            .setContentTitle(getString(R.string.local_service_started))
+                            .setContentText(message123)
+                            .setAutoCancel(true)
+                            .setColor(Color.parseColor("#d7ab0f"))
+                            .setSound(alarmSound)
+                            .setVibrate(pattern)
+                            .setContentIntent(pendingIntent);
+                }
+                notificationManager.notify(0, notificationBuilder.build());
+
+            }catch (Exception e){
+                Log.e(TAG,e.getMessage(),e);
+            }
+        }
+    }
     
 }

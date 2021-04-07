@@ -49,10 +49,7 @@ public class BackgroundService extends Service implements OnNewMessageListener {
 
     private SmsListener smsListener;
 
-//    Notification myNotication;
-//    private NotificationManager mNM;
-//    Bundle b;
-//    Intent notificationIntent;
+
 
     private final IBinder mBinder = new LocalBinder();
     public class LocalBinder extends Binder {
@@ -61,12 +58,11 @@ public class BackgroundService extends Service implements OnNewMessageListener {
         }
     }
 
-    private String newtext;
+    private String newtext = "SMS Forwarder Service Running";
 
     @Override
     public void onCreate() {
         registerReceive();
-        newtext = "SMS Forwarder Service Running";
 
         super.onCreate();
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.O)
@@ -74,7 +70,6 @@ public class BackgroundService extends Service implements OnNewMessageListener {
         else
             startForeground(1, new Notification());
 
-        //sendNotification(newtext);
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -92,7 +87,7 @@ public class BackgroundService extends Service implements OnNewMessageListener {
 
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID);
         Notification notification = notificationBuilder.setOngoing(true)
-                .setContentTitle("App is running in background")
+                .setContentTitle(newtext)
                 .setPriority(NotificationManager.IMPORTANCE_MIN)
                 .setCategory(Notification.CATEGORY_SERVICE)
                 .build();
@@ -128,74 +123,6 @@ public class BackgroundService extends Service implements OnNewMessageListener {
         return targetNumber;
     }
 
-    private void sendNotification(String message123) {
-
-        Intent intent;
-            intent = new Intent(this, SettingsActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-
-
-        if (android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-            NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-            PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-            long[] pattern = {500, 500, 500, 500, 500, 500, 500, 500, 500};
-            Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-            Bitmap largeIcon = BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher);
-
-            NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
-                    .setSmallIcon(R.drawable.ic_launcher)
-                    .setLargeIcon(largeIcon)
-                    .setContentTitle(getString(R.string.app_name))
-                    .setContentText(message123)
-                    .setAutoCancel(true)
-                    .setSound(alarmSound)
-                    .setVibrate(pattern)
-                    .setContentIntent(pendingIntent);
-            notificationManager.notify(0, notificationBuilder.build());
-        } else {
-//            Logger.e("**android.os.Build.VERSION.SDK_INT : " + android.os.Build.VERSION.SDK_INT);
-            try {
-                NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-                PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent, PendingIntent.FLAG_ONE_SHOT);
-                long[] pattern = {500, 500, 500, 500, 500, 500, 500, 500, 500};
-                Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-                Bitmap largeIcon = BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher);
-
-                String channelId = "android_channel_id";
-                String channelDescription = "Default Channel";
-                NotificationCompat.Builder notificationBuilder = null;
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    NotificationChannel channel = new NotificationChannel(channelId, channelDescription, NotificationManager.IMPORTANCE_DEFAULT);
-                    notificationManager.createNotificationChannel(channel);
-                    notificationBuilder = new NotificationCompat.Builder(this,channelId)
-                            .setSmallIcon(R.drawable.ic_launcher)
-                            .setLargeIcon(largeIcon)
-                            .setContentTitle(getString(R.string.app_name))
-                            .setContentText(message123)
-                            .setAutoCancel(true)
-                            .setColor(Color.parseColor("#d7ab0f"))
-                            .setSound(alarmSound)
-                            .setVibrate(pattern)
-                            .setContentIntent(pendingIntent);
-                }else{
-                    notificationBuilder = new NotificationCompat.Builder(this)
-                            .setSmallIcon(R.drawable.ic_launcher)
-                            .setLargeIcon(largeIcon)
-                            .setContentTitle(getString(R.string.app_name))
-                            .setContentText(message123)
-                            .setAutoCancel(true)
-                            .setColor(Color.parseColor("#d7ab0f"))
-                            .setSound(alarmSound)
-                            .setVibrate(pattern)
-                            .setContentIntent(pendingIntent);
-                }
-                notificationManager.notify(0, notificationBuilder.build());
-
-            }catch (Exception e){
-                Log.e(TAG,e.getMessage(),e);
-            }
-        }
-    }
 
     private void registerReceive(){
         if(smsListener == null) {
@@ -220,14 +147,6 @@ public class BackgroundService extends Service implements OnNewMessageListener {
         }
     }
 
-//    @Override
-//    public void onDestroy() {
-//        Log.d(TAG,"--> onDestroy()");
-//        super.onDestroy();
-//        unregisterReceive();
-//        forceStop();
-////        stopSelf();
-//    }
 
     @Override
     public void onDestroy() {
@@ -269,10 +188,10 @@ public class BackgroundService extends Service implements OnNewMessageListener {
         timer = new Timer();
         timerTask = new TimerTask() {
             public void run() {
-                Log.i("Count", "=========  "+ (counter++));
+                //Log.i("Count", "=========  "+ (counter++));
             }
         };
-        timer.schedule(timerTask, 2000, 2000); //
+        timer.schedule(timerTask, 2000, 2000);
     }
 
     @Override
