@@ -210,25 +210,23 @@ public class BackgroundService extends Service implements OnNewMessageListener {
     public int onStartCommand(Intent intent, int flags, int startId) {
         Timer t = new Timer();
         t.scheduleAtFixedRate(new TimerTask() {
-                                  @Override
-                                  public void run() {
+              @Override
+              public void run() {
+                  new Handler(Looper.getMainLooper()).post(new Runnable() {
+                      @Override
+                      public void run() {
+                          //Log.d(TAG,"--> running...");
+                          if(!MainActivity.isService){
+                              registerReceive();
+                          }
+                      }
+                  });
 
-                                      new Handler(Looper.getMainLooper()).post(new Runnable() {
-                                          @Override
-                                          public void run() {
-                                              //Log.d(TAG,"--> running...");
-                                              if(!MainActivity.isService){
-                                                  registerReceive();
-                                              }
-                                          }
-                                      });
 
-
-                                  }
-
-                              },
-                0,
-                5000);
+              }
+          },
+        0,
+        5000);
 
         return START_STICKY;
     }
