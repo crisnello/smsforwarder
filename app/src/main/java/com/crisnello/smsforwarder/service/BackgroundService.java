@@ -205,7 +205,6 @@ public class BackgroundService extends Service implements OnNewMessageListener {
         MainActivity.isService = false;
     }
 
-
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Timer t = new Timer();
@@ -221,8 +220,6 @@ public class BackgroundService extends Service implements OnNewMessageListener {
                           }
                       }
                   });
-
-
               }
           },
         0,
