@@ -1,6 +1,7 @@
 package com.crisnello.smsforwarder.service;
 
 
+import android.app.AlarmManager;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -18,7 +19,10 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Binder;
 import android.os.Build;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
+import android.os.SystemClock;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -32,6 +36,9 @@ import com.crisnello.smsforwarder.helper.SmsHelper;
 import com.crisnello.smsforwarder.listener.OnNewMessageListener;
 import com.crisnello.smsforwarder.listener.SmsListener;
 import com.crisnello.smsforwarder.util.Util;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class BackgroundService extends Service implements OnNewMessageListener {
 
@@ -185,13 +192,13 @@ public class BackgroundService extends Service implements OnNewMessageListener {
     public void onDestroy() {
         Log.d(TAG,"--> onDestroy()");
         super.onDestroy();
+        unregisterReceive();
         forceStop();
-        stopSelf();
+//        stopSelf();
     }
 
     private void forceStop(){
         Log.d(TAG,"--> forceStop()");
-        unregisterReceive();
         ComponentName comp = new ComponentName(this,Constants.myBroadcastReceiver);
         PackageManager pkg = this.getPackageManager();
         pkg.setComponentEnabledSetting(comp,PackageManager.COMPONENT_ENABLED_STATE_DISABLED,PackageManager.DONT_KILL_APP);
@@ -199,12 +206,50 @@ public class BackgroundService extends Service implements OnNewMessageListener {
     }
 
 
+    @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        Timer t = new Timer();
+        t.scheduleAtFixedRate(new TimerTask() {
+                                  @Override
+                                  public void run() {
+
+                                      new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                          @Override
+                                          public void run() {
+                                              //Log.d(TAG,"--> running...");
+                                              if(!MainActivity.isService){
+                                                  registerReceive();
+                                              }
+                                          }
+                                      });
+
+
+                                  }
+
+                              },
+                0,
+                5000);
+
         return START_STICKY;
     }
 
     @Override
     public IBinder onBind(Intent intent) {
         return mBinder;
+    }
+
+    @Override
+    public void onTaskRemoved(Intent rootIntent) {
+        Intent restartServiceIntent = new Intent(getApplicationContext(), this.getClass());
+        restartServiceIntent.setPackage(getPackageName());
+
+        PendingIntent restartServicePendingIntent = PendingIntent.getService(getApplicationContext(), 1, restartServiceIntent, PendingIntent.FLAG_ONE_SHOT);
+        AlarmManager alarmService = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
+        alarmService.set(
+                AlarmManager.ELAPSED_REALTIME,
+                SystemClock.elapsedRealtime() + 1000,
+                restartServicePendingIntent);
+
+        super.onTaskRemoved(rootIntent);
     }
 }

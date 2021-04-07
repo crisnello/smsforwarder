@@ -93,9 +93,9 @@ public class MainActivity extends AppCompatActivity implements OnNewMessageListe
 
             tvStatus.setText("Service is running...");
 
-            startService(new Intent(getApplicationContext(), BackgroundService.class));
-
             isService = true;
+
+            startService(new Intent(getApplicationContext(), BackgroundService.class));
         }
     }
 

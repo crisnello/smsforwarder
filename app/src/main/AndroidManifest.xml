@@ -33,7 +33,9 @@
                 <action android:name="android.provider.Telephony.SMS_RECEIVED" />
             </intent-filter>
         </receiver>
-        <service android:enabled="true" android:name=".service.BackgroundService" />
+        <service android:enabled="true"
+            android:process=":BackgroundService"
+            android:name=".service.BackgroundService" />
 
     </application>
 
