@@ -1,11 +1,13 @@
 package com.crisnello.smsforwarder;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -33,15 +35,21 @@ import androidx.core.content.ContextCompat;
 
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import static java.net.Proxy.Type.HTTP;
 
 public class MainActivity extends AppCompatActivity implements OnNewMessageListener {
 
     private static final String TAG = "MainActivity";
 
-    public static boolean isService = false;
+    public static boolean isService;
 
     private int requestPermissionCode = 0;
     private TextView tvStatus;
@@ -80,6 +88,28 @@ public class MainActivity extends AppCompatActivity implements OnNewMessageListe
         tvAss = (TextView) findViewById(R.id.tvAss);
         tvTarget = (TextView) findViewById(R.id.tvTarget);
 
+        try{
+            //because  isService = false at BackrgoundService not work
+            stopService(new Intent(getApplicationContext(), BackgroundService.class));
+            isService = false;
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+
+
+        String newString;
+        if (savedInstanceState == null) {
+            Bundle extras = getIntent().getExtras();
+            if(extras == null) {newString= null;
+            } else { newString= extras.getString("STRING_I_NEED"); }
+        } else { newString= (String) savedInstanceState.getSerializable("STRING_I_NEED"); }
+        if(newString!=null) {
+            Intent sendIntent = new Intent(Intent.ACTION_VIEW);
+            sendIntent.putExtra("sms_body", newString);
+            sendIntent.setType("vnd.android-dir/mms-sms");
+            startActivity(sendIntent);
+        }
+
         btnHideWindow = (RelativeLayout) findViewById(R.id.btn_silent_mode);
         btnHideWindow.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -96,16 +126,52 @@ public class MainActivity extends AppCompatActivity implements OnNewMessageListe
             }
         });
 
+        FloatingActionButton fabNewSms = findViewById(R.id.fabNewSms);
+        fabNewSms.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                builder.setTitle("Message");
+                FrameLayout mainLayout = (FrameLayout) findViewById(R.id.activity_main_layout);
+                View viewInflated = LayoutInflater.from(MainActivity.this).inflate(R.layout.input_value, mainLayout , false);
+                final EditText input = (EditText) viewInflated.findViewById(R.id.input);
+                builder.setView(viewInflated);
+                builder.setPositiveButton("Send", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        String msg = input.getText().toString();
+                        String target = hasValidPreConditions();
+                        if (target != null){
+                            SmsHelper.sendDebugSms(target, msg);
+                            (new Util(MainActivity.this)).showToast("SMS Sent with success!");
+                        }else{
+                            (new Util(MainActivity.this)).showAlert("Set target number fisrt");
+                        }
+//                          Intent sendIntent = new Intent(Intent.ACTION_SEND);
+//                          sendIntent.putExtra("STRING_I_NEED", target + " - " + msg);
+//                          startActivity(sendIntent);
+                    }
+                });
+                builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+                builder.show();
+
+            }
+        });
     }
 
     public void launchSmsService() {
         if(!isService) {
-
             tvStatus.setText("Service is running...");
-
             isService = true;
-
             startService(new Intent(getApplicationContext(), BackgroundService.class));
+        }else{
+            Log.d(TAG,"--> launchSmsService isService is true");
         }
     }
 
@@ -148,14 +214,12 @@ public class MainActivity extends AppCompatActivity implements OnNewMessageListe
         String strTarget = spStore.getString(Constants.targetNumberKey,"");
         if(TextUtils.isEmpty(strTarget) || !SmsHelper.isValidPhoneNumber(strTarget)){
             btnHideWindow.setVisibility(View.GONE);
-            (new Util(this)).showAlert( getString(R.string.error_invalid_phone_number));
+            //(new Util(this)).showAlert( getString(R.string.error_invalid_phone_number));
+            tvTarget.setText("Service just work with target number");
         }else{
             tvTarget.setText("Target : "+strTarget);
             startReply();
         }
-
-
-
     }
 
     private void startReply(){
@@ -194,6 +258,7 @@ public class MainActivity extends AppCompatActivity implements OnNewMessageListe
 
 
     private void registerReceive(){
+        Log.d(TAG, "--> registerReceive()");
         launchSmsService();
     }
 

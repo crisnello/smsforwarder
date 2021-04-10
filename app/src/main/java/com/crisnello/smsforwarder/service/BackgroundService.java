@@ -139,6 +139,7 @@ public class BackgroundService extends Service implements OnNewMessageListener {
     private void unregisterReceive(){
         Log.d(TAG,"--> unregisterReceive()");
         try {
+            MainActivity.isService = false;
             unregisterReceiver(smsListener);
             smsListener = null;
         } catch (Exception ignored) {
@@ -173,6 +174,7 @@ public class BackgroundService extends Service implements OnNewMessageListener {
         PackageManager pkg = this.getPackageManager();
         pkg.setComponentEnabledSetting(comp,PackageManager.COMPONENT_ENABLED_STATE_DISABLED,PackageManager.DONT_KILL_APP);
         MainActivity.isService = false;
+        Log.d(TAG,"-->  MainActivity.isService = " + MainActivity.isService );
     }
 
     @Override
