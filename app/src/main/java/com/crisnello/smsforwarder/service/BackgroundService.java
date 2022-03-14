@@ -159,15 +159,20 @@ public class BackgroundService extends Service implements OnNewMessageListener {
 //        broadcastIntent.setAction("restartservice");
 //        broadcastIntent.setClass(this, Restarter.class);
 //        this.sendBroadcast(broadcastIntent);
+        reRun();
     }
 
-    @Override
-    public void onTaskRemoved(Intent rootIntent) {
-        //ISSO NÃO FUNCIONA!!!!!!!!!
+    public void reRun(){ //NADA de FUNFAR
         Intent intent = new Intent(getApplicationContext(), BackgroundService.class);
         PendingIntent pendingIntent = PendingIntent.getService(this, 1, intent, PendingIntent.FLAG_ONE_SHOT);
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         alarmManager.set(AlarmManager.RTC_WAKEUP, SystemClock.elapsedRealtime() + 5000, pendingIntent);
+    }
+
+    @Override
+    public void onTaskRemoved(Intent rootIntent) {
+        //ISSO NÃO FUNCIONA AQUI!!!!!!!!!
+        //reRun();
         super.onTaskRemoved(rootIntent);
     }
 
