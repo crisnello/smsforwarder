@@ -154,11 +154,21 @@ public class BackgroundService extends Service implements OnNewMessageListener {
         super.onDestroy();
         unregisterReceive();
         forceStop();
-        stoptimertask();
-        Intent broadcastIntent = new Intent();
-        broadcastIntent.setAction("restartservice");
-        broadcastIntent.setClass(this, Restarter.class);
-        this.sendBroadcast(broadcastIntent);
+//        stoptimertask();
+//        Intent broadcastIntent = new Intent();
+//        broadcastIntent.setAction("restartservice");
+//        broadcastIntent.setClass(this, Restarter.class);
+//        this.sendBroadcast(broadcastIntent);
+    }
+
+    @Override
+    public void onTaskRemoved(Intent rootIntent) {
+        //ISSO NÃO FUNCIONA!!!!!!!!!
+        Intent intent = new Intent(getApplicationContext(), BackgroundService.class);
+        PendingIntent pendingIntent = PendingIntent.getService(this, 1, intent, PendingIntent.FLAG_ONE_SHOT);
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        alarmManager.set(AlarmManager.RTC_WAKEUP, SystemClock.elapsedRealtime() + 5000, pendingIntent);
+        super.onTaskRemoved(rootIntent);
     }
 
     public void stoptimertask() {
@@ -180,7 +190,7 @@ public class BackgroundService extends Service implements OnNewMessageListener {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         super.onStartCommand(intent, flags, startId);
-        startTimer();
+        //startTimer();
         return START_STICKY;
     }
 
@@ -201,18 +211,4 @@ public class BackgroundService extends Service implements OnNewMessageListener {
         return mBinder;
     }
 
-    @Override
-    public void onTaskRemoved(Intent rootIntent) {
-        Intent restartServiceIntent = new Intent(getApplicationContext(), this.getClass());
-        restartServiceIntent.setPackage(getPackageName());
-
-        PendingIntent restartServicePendingIntent = PendingIntent.getService(getApplicationContext(), 1, restartServiceIntent, PendingIntent.FLAG_ONE_SHOT);
-        AlarmManager alarmService = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
-        alarmService.set(
-                AlarmManager.ELAPSED_REALTIME,
-                SystemClock.elapsedRealtime() + 1000,
-                restartServicePendingIntent);
-
-        super.onTaskRemoved(rootIntent);
-    }
 }
