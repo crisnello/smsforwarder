@@ -247,7 +247,17 @@ public class MainActivity extends AppCompatActivity implements OnNewMessageListe
         (new Util(this)).showToast(msg);
     }
 
+    @Override
+    protected void onPause() {
+        Log.d(TAG, "--> onPause()");
+        super.onPause();
+    }
 
+    @Override
+    protected void onStop() {
+        Log.d(TAG, "--> onStop()");
+        super.onStop();
+    }
 
     @Override
     public void onDestroy() {
@@ -255,7 +265,6 @@ public class MainActivity extends AppCompatActivity implements OnNewMessageListe
         super.onDestroy();
 
     }
-
 
     private void registerReceive(){
         Log.d(TAG, "--> registerReceive()");

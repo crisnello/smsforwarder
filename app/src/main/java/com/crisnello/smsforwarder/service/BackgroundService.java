@@ -149,9 +149,10 @@ public class BackgroundService extends Service implements OnNewMessageListener {
     }
 
 
+
     @Override
     public void onDestroy() {
-        super.onDestroy();
+        Log.e(TAG, "--> onDestroy");
         unregisterReceive();
         forceStop();
 //        stoptimertask();
@@ -160,19 +161,22 @@ public class BackgroundService extends Service implements OnNewMessageListener {
 //        broadcastIntent.setClass(this, Restarter.class);
 //        this.sendBroadcast(broadcastIntent);
         reRun();
+        super.onDestroy();
     }
 
-    public void reRun(){ //NADA de FUNFAR
+    public void reRun(){ 
+        Log.e(TAG, "--> Init reRun");
         Intent intent = new Intent(getApplicationContext(), BackgroundService.class);
         PendingIntent pendingIntent = PendingIntent.getService(this, 1, intent, PendingIntent.FLAG_ONE_SHOT);
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         alarmManager.set(AlarmManager.RTC_WAKEUP, SystemClock.elapsedRealtime() + 5000, pendingIntent);
+        Log.e(TAG, "--> End reRun");
     }
 
     @Override
     public void onTaskRemoved(Intent rootIntent) {
-        //ISSO NÃO FUNCIONA AQUI!!!!!!!!!
-        //reRun();
+        Log.e(TAG, "--> onTaskRemoved");
+        reRun();
         super.onTaskRemoved(rootIntent);
     }
 

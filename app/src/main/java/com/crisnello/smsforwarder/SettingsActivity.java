@@ -25,7 +25,7 @@ public class SettingsActivity extends AppCompatActivity {
 
     private static final String TAG = "SettingsActivity";
 
-    private Button btnSave;
+    private Button btnStart;
 
     private String signature;
     public String getSignature() {
@@ -64,8 +64,8 @@ public class SettingsActivity extends AppCompatActivity {
             actionBar.setHomeButtonEnabled(true);
         }
 
-        btnSave = findViewById(R.id.btnSave);
-        btnSave.setOnClickListener(new View.OnClickListener() {
+        btnStart = findViewById(R.id.btnSave);
+        btnStart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 onBackPressed();
