@@ -160,11 +160,10 @@ public class BackgroundService extends Service implements OnNewMessageListener {
 //        broadcastIntent.setAction("restartservice");
 //        broadcastIntent.setClass(this, Restarter.class);
 //        this.sendBroadcast(broadcastIntent);
-        reRun();
         super.onDestroy();
     }
 
-    public void reRun(){ 
+    public void reRun(){
         Log.e(TAG, "--> Init reRun");
         Intent intent = new Intent(getApplicationContext(), BackgroundService.class);
         PendingIntent pendingIntent = PendingIntent.getService(this, 1, intent, PendingIntent.FLAG_ONE_SHOT);
